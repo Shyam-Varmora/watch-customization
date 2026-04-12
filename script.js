@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderWatch();
     renderOptions('face');
     renderPriceDisplay();
+    startClock(); // 🔥 ADD THIS
 });
 
 // Tab functionality
@@ -144,7 +145,19 @@ function renderOptions(type) {
 
 // Select an option
 function selectOption(type, option) {
+
+    // 🔥 CONSTRAINT RULE
+    if (type === "strap") {
+        const caseSize = currentCustomization.case.size;
+
+        if (caseSize === "42mm" && option.material === "Leather") {
+            alert("Leather strap not supported for 42mm case");
+            return;
+        }
+    }
+
     currentCustomization[type] = option;
+
     renderWatch();
     renderOptions(type);
     renderPriceDisplay();
@@ -242,6 +255,7 @@ function renderWatch() {
                     <div class="watch-hands">
                         <div class="watch-hand hour-hand" style="background-color: ${hands.color};"></div>
                         <div class="watch-hand minute-hand" style="background-color: ${hands.color};"></div>
+                        <div class="watch-hand second-hand" style="background-color: ${hands.color};"></div>
                     </div>
                     <div class="center-dot" style="background-color: ${hands.color};"></div>
                 </div>
@@ -332,7 +346,7 @@ function renderPriceDisplay() {
                     </svg>
                     Save
                 </button>
-                <button class="btn-secondary">
+                <button class="btn-secondary action-share">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                         <polyline points="16,6 12,2 8,6"/>
@@ -522,10 +536,37 @@ function saveDesign() {
   alert("Design Saved");
 }
 
-function shareDesign() {
-  const data = JSON.stringify(currentCustomization);
-  navigator.clipboard.writeText(data);
-  alert("Design copied to clipboard");
+async function shareDesign() {
+  const element = document.getElementById("watchDisplay");
+
+  try {
+    const canvas = await html2canvas(element);
+    
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], "watch.png", { type: "image/png" });
+
+      // 🔥 USE NATIVE SHARE (WhatsApp etc.)
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: "My Custom Watch",
+          text: "Check out my custom watch design!",
+          files: [file]
+        });
+      } else {
+        // ❗ FALLBACK (desktop)
+        const link = document.createElement("a");
+        link.download = "watch.png";
+        link.href = canvas.toDataURL();
+        link.click();
+
+        alert("Sharing not supported. Image downloaded instead.");
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Sharing failed");
+  }
 }
 
 function downloadImage() {
@@ -535,4 +576,30 @@ function downloadImage() {
     link.href = canvas.toDataURL();
     link.click();
   });
+}
+// REAL TIME CLOCK ANIMATION
+function startClock() {
+  setInterval(() => {
+    const now = new Date();
+    const secondHand = document.querySelector(".second-hand");
+    const sec = now.getSeconds() * 6;
+    const min = now.getMinutes() * 6;
+    const hr = (now.getHours() % 12) * 30 + now.getMinutes() * 0.5;
+
+    const hourHand = document.querySelector(".hour-hand");
+    const minuteHand = document.querySelector(".minute-hand");
+
+    if (hourHand && minuteHand) {
+      hourHand.style.transform =
+        `translate(-50%, -100%) rotate(${hr}deg)`;
+
+      minuteHand.style.transform =
+        `translate(-50%, -100%) rotate(${min}deg)`;
+    }
+
+    if (secondHand) {
+  secondHand.style.transform =
+    `translate(-50%, -100%) rotate(${sec}deg)`;
+}
+  }, 1000);
 }
