@@ -355,11 +355,10 @@ function renderPriceDisplay() {
                     Share
                 </button>
                 <div class="secondary-buttons">
-            <button class="btn-secondary action-download">Download</button>
-</div>
+                    <button class="btn-secondary action-download">Download</button>
+                </div>
             </div>
         </div>
-        
         <div class="guarantees">
             <div class="guarantee">
                 <svg class="guarantee-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
