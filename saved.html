@@ -11,9 +11,11 @@
 <div id="savedContainer"></div>
 
 <script>
+// This page shows all the watch designs you saved
+
 const container = document.getElementById("savedContainer");
 
-// GET ALL SAVED DESIGNS
+// Get all saved designs from the browser's memory
 let designs = JSON.parse(localStorage.getItem("savedDesigns")) || [];
 
 if (designs.length === 0) {
@@ -35,12 +37,14 @@ if (designs.length === 0) {
   });
 }
 
+// Load a saved design back into the main page
 function loadDesign(index) {
   const designs = JSON.parse(localStorage.getItem("savedDesigns"));
   localStorage.setItem("loadedDesign", JSON.stringify(designs[index]));
   window.location.href = "index.html";
 }
 
+// Delete a saved design
 function deleteDesign(index) {
   let designs = JSON.parse(localStorage.getItem("savedDesigns"));
   designs.splice(index, 1);

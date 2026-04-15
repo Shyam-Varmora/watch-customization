@@ -1,6 +1,11 @@
+// This code makes the watch customization website work!
+// It lets you pick different parts of the watch and see how it looks.
+
+// Check if user is logged in from before
 let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-let pendingAction = null;
-// Watch customization data
+let pendingAction = null; // This saves what the user wanted to do if they need to login first
+
+// All the watch parts you can choose from
 const watchData = {
     faces: [
         { id: 'classic-white', name: 'Classic White', color: '#FFFFFF', price: 50 },
@@ -48,7 +53,7 @@ const watchData = {
     ]
 };
 
-// Current customization state
+// What the user has picked right now
 let currentCustomization = {
     face: watchData.faces[0],
     hands: watchData.hands[0],
@@ -57,51 +62,51 @@ let currentCustomization = {
     markers: watchData.markers[0]
 };
 
+// Load a saved design if there is one
 const loaded = JSON.parse(localStorage.getItem("loadedDesign"));
-
 if (loaded) {
   currentCustomization = loaded;
   localStorage.removeItem("loadedDesign");
 }
 
-// Initialize the application
+// When the page loads, set everything up
 document.addEventListener('DOMContentLoaded', function() {
     initializeTabs();
     renderWatch();
     renderOptions('face');
     renderPriceDisplay();
-    startClock(); // 🔥 ADD THIS
+    startClock();
 });
 
-// Tab functionality
+// Make the tabs work (Face, Hands, Case, etc.)
 function initializeTabs() {
     const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const tabType = this.getAttribute('data-tab');
-            
-            // Update active tab
+
+            // Make this tab look active
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            
-            // Render options for selected tab
+
+            // Show options for this tab
             renderOptions(tabType);
         });
     });
 }
 
-// Render customization options
+// Show the options for a tab (like different faces or hands)
 function renderOptions(type) {
     const optionsGrid = document.getElementById('optionsGrid');
     const options = watchData[type + 's'] || watchData[type];
-    
+
     optionsGrid.innerHTML = '';
-    
+
     options.forEach(option => {
         const optionElement = document.createElement('div');
         optionElement.className = `option ${currentCustomization[type].id === option.id ? 'selected' : ''}`;
         optionElement.onclick = () => selectOption(type, option);
-        
+
         let previewContent = '';
         if (type === 'face') {
             previewContent = `<div class="option-preview" style="background-color: ${option.color};"></div>`;
@@ -124,32 +129,30 @@ function renderOptions(type) {
             else if (option.style === 'diamonds') markerSymbol = '◊';
             else if (option.style === 'dots') markerSymbol = '●';
             else if (option.style === 'lines') markerSymbol = '—';
-            
+
             previewContent = `
                 <div class="option-preview" style="background-color: #1F2937; display: flex; align-items: center; justify-content: center; color: ${option.color}; font-weight: bold;">
                     ${markerSymbol}
                 </div>
             `;
         }
-        
+
         optionElement.innerHTML = `
             ${previewContent}
             <div class="option-name">${option.name}</div>
             ${option.material ? `<div class="option-material">${option.material}</div>` : ''}
             <div class="option-price">₹${option.price}</div>
         `;
-        
+
         optionsGrid.appendChild(optionElement);
     });
 }
 
-// Select an option
+// When user clicks on an option, update the watch
 function selectOption(type, option) {
-
-    // 🔥 CONSTRAINT RULE
+    // Special rule: Leather straps don't work with 42mm cases
     if (type === "strap") {
         const caseSize = currentCustomization.case.size;
-
         if (caseSize === "42mm" && option.material === "Leather") {
             alert("Leather strap not supported for 42mm case");
             return;
@@ -163,12 +166,12 @@ function selectOption(type, option) {
     renderPriceDisplay();
 }
 
-// Render the watch display
+// Draw the watch on the screen
 function renderWatch() {
     const watchDisplay = document.getElementById('watchDisplay');
     const { face, hands, case: watchCase, strap, markers } = currentCustomization;
-    
-    // Get pattern styles for face
+
+    // Make the face look special (like pearl or carbon fiber)
     let faceStyle = `background-color: ${face.color};`;
     if (face.pattern === 'pearl') {
         faceStyle = `
@@ -188,8 +191,8 @@ function renderWatch() {
             background-position: 0 0, 0 1.5px, 1.5px -1.5px, -1.5px 0px;
         `;
     }
-    
-    // Get strap texture
+
+    // Make the strap look special (like mesh or grain)
     let strapStyle = `background-color: ${strap.color};`;
     if (strap.material === 'Metal' && strap.texture === 'mesh') {
         strapStyle = `
@@ -204,8 +207,8 @@ function renderWatch() {
             background-size: 3px 3px;
         `;
     }
-    
-    // Generate markers
+
+    // Make the markers (numbers on the watch face)
     const markerPositions = [
         { hour: 12, x: 50, y: 12 },
         { hour: 1, x: 75, y: 20 },
@@ -220,12 +223,12 @@ function renderWatch() {
         { hour: 10, x: 12, y: 35 },
         { hour: 11, x: 25, y: 20 },
     ];
-    
+
     let markersHtml = '';
     markerPositions.forEach(({ hour, x, y }) => {
         let markerContent = '';
         const isMajor = [12, 3, 6, 9].includes(hour);
-        
+
         if (markers.style === 'roman' && isMajor) {
             const romanNumerals = { 12: 'XII', 3: 'III', 6: 'VI', 9: 'IX' };
             markerContent = `<span class="marker roman" style="left: ${x}%; top: ${y}%; color: ${markers.color};">${romanNumerals[hour]}</span>`;
@@ -240,10 +243,10 @@ function renderWatch() {
         } else if (markers.style === 'lines') {
             markerContent = `<div class="marker lines ${isMajor ? 'major' : 'minor'}" style="left: ${x}%; top: ${y}%; background-color: ${markers.color};"></div>`;
         }
-        
+
         markersHtml += markerContent;
     });
-    
+
     watchDisplay.innerHTML = `
         <div class="watch-container">
             <div class="watch-strap" style="${strapStyle}"></div>
@@ -279,21 +282,21 @@ function renderWatch() {
     `;
 }
 
-// Render price display
+// Show how much the watch costs
 function renderPriceDisplay() {
     const priceDisplay = document.getElementById('priceDisplay');
     const { face, hands, case: watchCase, strap, markers } = currentCustomization;
-    
+
     const totalPrice = face.price + hands.price + watchCase.price + strap.price + markers.price;
     const basePrice = 499;
     const finalPrice = totalPrice + basePrice;
-    
+
     priceDisplay.innerHTML = `
         <div class="card-header">
             <h3 class="card-title">Your Masterpiece</h3>
             <p class="card-subtitle">Handcrafted Swiss Excellence</p>
         </div>
-        
+
         <div class="price-breakdown">
             <div class="price-item">
                 <span class="price-item-name">Face: ${face.name}</span>
@@ -320,7 +323,7 @@ function renderPriceDisplay() {
                 <span class="price-item-value">₹${basePrice}</span>
             </div>
         </div>
-        
+
         <div class="price-total">
             <div class="price-total-row">
                 <span class="price-total-label">Total Investment</span>
@@ -328,7 +331,7 @@ function renderPriceDisplay() {
             </div>
             <p class="price-note">Includes lifetime warranty & certification</p>
         </div>
-        
+
         <div class="action-buttons">
             <button class="btn-primary action-order">
                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -338,7 +341,7 @@ function renderPriceDisplay() {
                 </svg>
                 Commission Timepiece
             </button>
-            
+
             <div class="secondary-buttons">
                 <button class="btn-secondary">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -385,7 +388,7 @@ function renderPriceDisplay() {
                 <span>Swiss certified chronometer movement</span>
             </div>
         </div>
-        
+
         <div class="delivery-info">
             <p>⏱️ Estimated crafting time: 6-8 weeks</p>
             <p>Each timepiece is individually numbered & certified</p>
@@ -393,109 +396,7 @@ function renderPriceDisplay() {
     `;
 }
 
-/* LOGIN */
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("authMessage");
-
-  const savedUser = JSON.parse(localStorage.getItem("user"));
-
-  if (!savedUser) {
-    msg.innerText = "No user found. Please register.";
-    return;
-  }
-
-  if (email === savedUser.email && password === savedUser.password) {
-    isLoggedIn = true;
-    msg.innerText = "";
-    closeLogin();
-  } else {
-    msg.innerText = "Invalid email or password";
-  }
-}
-
-function register() {
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-  const msg = document.getElementById("registerMessage");
-
-  if (!email || !password) {
-    msg.innerText = "Fill all fields";
-    return;
-  }
-
-  const user = { email, password };
-  localStorage.setItem("user", JSON.stringify(user));
-
-  // 🔥 IMPORTANT FIXES
-  isLoggedIn = true; // auto login after register
-  localStorage.setItem("isLoggedIn", "true"); // persist login
-
-  msg.style.color = "#4ade80";
-  msg.innerText = "Registered & Logged in";
-
-  setTimeout(() => {
-    closeRegister();
-  }, 800);
-}
-
-/* MODAL CONTROLS */
-
-function closeLogin() {
-  document.getElementById("loginModal").classList.add("hidden");
-}
-
-function showRegister() {
-  closeLogin();
-  document.getElementById("registerModal").classList.remove("hidden");
-}
-
-function closeRegister() {
-  document.getElementById("registerModal").classList.add("hidden");
-}
-
-/* AUTH GUARD */
-function requireLogin(callback) {
-  if (!isLoggedIn) {
-    pendingAction = callback; // store action
-    openLogin();
-    return;
-  }
-  callback();
-}
-
-document.addEventListener("click", function(e) {
-
-  if (e.target.closest(".action-order")) {
-    requireLogin(() => {
-      alert("Proceed to checkout");
-    });
-  }
-
-  if (e.target.closest(".action-save")) {
-    requireLogin(() => {
-      saveDesign();
-    });
-  }
-
-  if (e.target.closest(".action-share")) {
-    requireLogin(() => {
-      shareDesign();
-    });
-  }
-  if (e.target.closest(".action-download")) {
-  requireLogin(() => {
-    downloadImage();
-  });
-}
-});
-
-function openLogin() {
-  console.log("LOGIN OPEN CALLED"); // DEBUG
-  document.getElementById("loginModal").classList.remove("hidden");
-}
-
+// Login functions
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -514,7 +415,7 @@ function login() {
 
     closeLogin();
 
-    // 🔥 EXECUTE PENDING ACTION
+    // Do what the user wanted to do before logging in
     if (pendingAction) {
       pendingAction();
       pendingAction = null;
@@ -525,6 +426,86 @@ function login() {
   }
 }
 
+function register() {
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  const msg = document.getElementById("registerMessage");
+
+  if (!email || !password) {
+    msg.innerText = "Fill all fields";
+    return;
+  }
+
+  const user = { email, password };
+  localStorage.setItem("user", JSON.stringify(user));
+
+  // Auto login after register
+  isLoggedIn = true;
+  localStorage.setItem("isLoggedIn", "true");
+
+  msg.style.color = "#4ade80";
+  msg.innerText = "Registered & Logged in";
+
+  setTimeout(() => {
+    closeRegister();
+  }, 800);
+}
+
+// Modal controls
+function closeLogin() {
+  document.getElementById("loginModal").classList.add("hidden");
+}
+
+function showRegister() {
+  closeLogin();
+  document.getElementById("registerModal").classList.remove("hidden");
+}
+
+function closeRegister() {
+  document.getElementById("registerModal").classList.add("hidden");
+}
+
+// Check if user needs to login before doing something
+function requireLogin(callback) {
+  if (!isLoggedIn) {
+    pendingAction = callback;
+    openLogin();
+    return;
+  }
+  callback();
+}
+
+// Listen for button clicks
+document.addEventListener("click", function(e) {
+  if (e.target.closest(".action-order")) {
+    requireLogin(() => {
+      alert("Proceed to checkout");
+    });
+  }
+
+  if (e.target.closest(".action-save")) {
+    requireLogin(() => {
+      saveDesign();
+    });
+  }
+
+  if (e.target.closest(".action-share")) {
+    requireLogin(() => {
+      shareDesign();
+    });
+  }
+  if (e.target.closest(".action-download")) {
+    requireLogin(() => {
+      downloadImage();
+    });
+  }
+});
+
+function openLogin() {
+  document.getElementById("loginModal").classList.remove("hidden");
+}
+
+// Save the current watch design
 function saveDesign() {
   let designs = JSON.parse(localStorage.getItem("savedDesigns")) || [];
 
@@ -535,16 +516,17 @@ function saveDesign() {
   alert("Design Saved");
 }
 
+// Share the watch design
 async function shareDesign() {
   const element = document.getElementById("watchDisplay");
 
   try {
     const canvas = await html2canvas(element);
-    
+
     canvas.toBlob(async (blob) => {
       const file = new File([blob], "watch.png", { type: "image/png" });
 
-      // 🔥 USE NATIVE SHARE (WhatsApp etc.)
+      // Try to share using the browser's share feature
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: "My Custom Watch",
@@ -552,7 +534,7 @@ async function shareDesign() {
           files: [file]
         });
       } else {
-        // ❗ FALLBACK (desktop)
+        // If sharing doesn't work, just download the image
         const link = document.createElement("a");
         link.download = "watch.png";
         link.href = canvas.toDataURL();
@@ -568,6 +550,7 @@ async function shareDesign() {
   }
 }
 
+// Download the watch as an image
 function downloadImage() {
   html2canvas(document.getElementById("watchDisplay")).then(canvas => {
     const link = document.createElement("a");
@@ -576,7 +559,8 @@ function downloadImage() {
     link.click();
   });
 }
-// REAL TIME CLOCK ANIMATION
+
+// Make the clock hands move like a real watch
 function startClock() {
   setInterval(() => {
     const now = new Date();
@@ -597,8 +581,7 @@ function startClock() {
     }
 
     if (secondHand) {
-  secondHand.style.transform =
-    `translate(-50%, -100%) rotate(${sec}deg)`;
+  secondHand.style.transform = `translate(-50%, -100%) rotate(${sec}deg)`;
 }
   }, 1000);
 }
