@@ -585,7 +585,3 @@ function startClock() {
 }
   }, 1000);
 }
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js");
-}
