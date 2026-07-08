@@ -248,13 +248,13 @@ function renderWatch() {
     });
 
     watchDisplay.innerHTML = `
-        watchDisplay.innerHTML = <div id="watchImage" class="watch-container">
+        <div id="watchImage" class="watch-container">
             <div class="watch-strap" style="${strapStyle}"></div>
-            <div class="watch-case" style="background-color: ${watchCase.color}; border-color: ${watchCase.color};">
-                <div class="watch-face" style="${faceStyle}">
-                    <div class="watch-markers">
-                        ${markersHtml}
-                    </div>
+                <div class="watch-case" style="background-color: ${watchCase.color}; border-color: ${watchCase.color};">
+                    <div class="watch-face" style="${faceStyle}">
+                        <div class="watch-markers">
+                            ${markersHtml}
+                        </div>
                     <div class="watch-hands">
                         <div class="watch-hand hour-hand" style="background-color: ${hands.color};"></div>
                         <div class="watch-hand minute-hand" style="background-color: ${hands.color};"></div>
@@ -630,7 +630,10 @@ function calculatePrice() {
 
 async function addToCart() {
 
-    const canvas = await html2canvas(document.getElementById("watchDisplay"));
+    const canvas = await html2canvas(document.getElementById("watchImage"), {
+        backgroundColor: null,
+        scale: 2
+    });
 
     const image = canvas.toDataURL("image/png");
 

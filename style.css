@@ -58,10 +58,11 @@ body {
     border-radius: 8px;
 }
 
-.crown-icon {
-    width: 40px;
-    height: 40px;
-    color: #000000;
+.crown-icon{
+    width:42px;
+    height:42px;
+    color:#000;
+    display:block;
 }
 
 .brand-icon.small .crown-icon {
@@ -244,15 +245,22 @@ body {
 }
 
 /* Watch Display */
-.watch-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
+.watch-display{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:32px;
+    background:transparent;
 }
 
-.watch-container {
-    position: relative;
+.watch-container{
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:340px;
+    height:340px;
+    background:transparent;
 }
 
 .watch-strap {
@@ -1035,4 +1043,28 @@ html{
 
 #container .price-card{
     margin:0;
+}
+
+.cart-card{
+    background: linear-gradient(135deg, rgba(55,65,81,.5), rgba(17,24,39,.5));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(55,65,81,.5);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 25px 50px rgba(0,0,0,.5);
+    text-align: center;
+}
+
+.cart-image{
+    width:220px;
+    display:block;
+    margin:0 auto 20px;
+    object-fit:contain;
+}
+
+#container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+    padding:20px 0;
 }
