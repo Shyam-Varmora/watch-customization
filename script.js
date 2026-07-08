@@ -528,7 +528,10 @@ function openLogin() {
 // Save the current watch design
 async function saveDesign() {
 
-    const canvas = await html2canvas(document.getElementById("watchImage"));
+    const canvas = await html2canvas(document.getElementById("watchImage"), {
+        backgroundColor: null,
+        scale: 2
+    });
 
     const image = canvas.toDataURL("image/png");
 
