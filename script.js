@@ -248,7 +248,7 @@ function renderWatch() {
     });
 
     watchDisplay.innerHTML = `
-        <div class="watch-container">
+        watchDisplay.innerHTML = <div id="watchImage" class="watch-container">
             <div class="watch-strap" style="${strapStyle}"></div>
             <div class="watch-case" style="background-color: ${watchCase.color}; border-color: ${watchCase.color};">
                 <div class="watch-face" style="${faceStyle}">
@@ -343,13 +343,13 @@ function renderPriceDisplay() {
             </button>
 
             <div class="secondary-buttons">
-                <button class="btn-secondary">
+                <button class="btn-secondary action-save">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                     </svg>
-                    Save
+                        Save
                 </button>
-                <button class="btn-secondary action-share">
+                    <button class="btn-secondary action-share">
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                         <polyline points="16,6 12,2 8,6"/>
@@ -357,9 +357,22 @@ function renderPriceDisplay() {
                     </svg>
                     Share
                 </button>
-                <div class="secondary-buttons">
-                    <button class="btn-secondary action-download">Download</button>
-                </div>
+                <button class="btn-secondary action-cart">
+    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39A2 2 0 0 0 9.64 16H19a2 2 0 0 0 2-1.64L23 6H6"></path>
+    </svg>
+    My Cart
+</button>
+                <button class="btn-secondary action-download">
+    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    Download
+</button>
             </div>
         </div>
         <div class="guarantees">
@@ -485,15 +498,22 @@ document.addEventListener("click", function(e) {
 
   if (e.target.closest(".action-save")) {
     requireLogin(() => {
-      saveDesign();
+      addToCart();
     });
-  }
+ }
 
   if (e.target.closest(".action-share")) {
     requireLogin(() => {
       shareDesign();
     });
   }
+
+  if (e.target.closest(".action-cart")) {
+    requireLogin(() => {
+        window.location.href = "cart.html";
+    });
+}
+
   if (e.target.closest(".action-download")) {
     requireLogin(() => {
       downloadImage();
@@ -506,14 +526,23 @@ function openLogin() {
 }
 
 // Save the current watch design
-function saveDesign() {
-  let designs = JSON.parse(localStorage.getItem("savedDesigns")) || [];
+async function saveDesign() {
 
-  designs.push(currentCustomization);
+    const canvas = await html2canvas(document.getElementById("watchImage"));
 
-  localStorage.setItem("savedDesigns", JSON.stringify(designs));
+    const image = canvas.toDataURL("image/png");
 
-  alert("Design Saved");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart.push({
+        image: image,
+        customization: currentCustomization,
+        price: calculatePrice()
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert("Your watch is saved successfully into the cart!");
 }
 
 // Share the watch design
@@ -552,7 +581,7 @@ async function shareDesign() {
 
 // Download the watch as an image
 function downloadImage() {
-  html2canvas(document.getElementById("watchDisplay")).then(canvas => {
+  html2canvas(document.getElementById("watchImage")).then(canvas => {
     const link = document.createElement("a");
     link.download = "watch-design.png";
     link.href = canvas.toDataURL();
@@ -584,4 +613,36 @@ function startClock() {
   secondHand.style.transform = `translate(-50%, -100%) rotate(${sec}deg)`;
 }
   }, 1000);
+}
+
+function calculatePrice() {
+    const { face, hands, case: watchCase, strap, markers } = currentCustomization;
+
+    return (
+        face.price +
+        hands.price +
+        watchCase.price +
+        strap.price +
+        markers.price +
+        499
+    );
+}
+
+async function addToCart() {
+
+    const canvas = await html2canvas(document.getElementById("watchDisplay"));
+
+    const image = canvas.toDataURL("image/png");
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart.push({
+        image: image,
+        customization: currentCustomization,
+        price: calculatePrice()
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert("Your watch is saved successfully into the cart!");
 }

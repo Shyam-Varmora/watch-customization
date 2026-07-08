@@ -201,7 +201,7 @@ body {
 
 /* Main Content */
 .main-content {
-    padding: 80px 0;
+    padding: 20px 0;
 }
 
 .customization-grid {
@@ -989,4 +989,50 @@ body {
     .options-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+#container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+    padding:40px 0;
+}
+
+.cart-image{
+    width:180px;
+    height:180px;
+    object-fit:contain;
+    display:block;
+    margin:20px auto;
+}
+.price-card{
+    transition:.3s;
+}
+
+.price-card:hover{
+    transform:translateY(-8px);
+}
+
+body{
+    background:#020817;
+}
+
+html{
+    background:#020817;
+}
+
+#container .price-card{
+    position: static;
+    top: auto;
+}
+
+#container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:30px;
+    align-items:start;
+}
+
+#container .price-card{
+    margin:0;
 }
