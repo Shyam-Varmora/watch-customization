@@ -112,12 +112,51 @@ function renderOptions(type) {
             previewContent = `<div class="option-preview" style="background-color: ${option.color};"></div>`;
         } else if (type === 'hands') {
             previewContent = `
-                <div class="option-preview" style="background-color: #1F2937; position: relative;">
-                    <div style="position: absolute; top: 50%; left: 50%; width: 2px; height: 20px; background-color: ${option.color}; transform: translate(-50%, -100%) rotate(45deg); transform-origin: bottom;"></div>
-                    <div style="position: absolute; top: 50%; left: 50%; width: 1px; height: 24px; background-color: ${option.color}; transform: translate(-50%, -100%) rotate(120deg); transform-origin: bottom;"></div>
-                    <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background-color: ${option.color}; border-radius: 50%; transform: translate(-50%, -50%);"></div>
-                </div>
-            `;
+    <div class="option-preview" style="
+        background:${option.id === "black-modern"
+            ? "radial-gradient(circle,#9CA3AF 0%,#CBD5E1 100%)"
+            : "radial-gradient(circle,#374151 0%,#111827 100%)"};
+        position: relative;
+        border:2px solid #4b5563;
+    ">
+        <div style="
+            position:absolute;
+            top:50%;
+            left:50%;
+            width:3px;
+            height:20px;
+            background:${option.id === "black-modern" ? "#000000" : option.color};
+            transform:translate(-50%,-100%) rotate(45deg);
+            transform-origin:bottom;
+            border-radius:3px;
+            box-shadow:0 0 3px rgba(255,255,255,.2);
+        "></div>
+
+        <div style="
+            position:absolute;
+            top:50%;
+            left:50%;
+            width:2px;
+            height:24px;
+            background:${option.id === "black-modern" ? "#000000" : option.color};  
+            transform:translate(-50%,-100%) rotate(120deg);
+            transform-origin:bottom;
+            border-radius:3px;
+            box-shadow:0 0 3px rgba(255,255,255,.2);
+        "></div>
+
+        <div style="
+            position:absolute;
+            top:50%;
+            left:50%;
+            width:6px;
+            height:6px;
+            background:${option.id === "black-modern" ? "#000000" : option.color};
+            border-radius:50%;
+            transform:translate(-50%,-50%);
+        "></div>
+    </div>
+`;
         } else if (type === 'case') {
             previewContent = `<div class="option-preview" style="border-color: ${option.color}; background-color: rgba(0,0,0,0.3);"></div>`;
         } else if (type === 'strap') {
