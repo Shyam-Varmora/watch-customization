@@ -589,10 +589,40 @@ async function saveDesign() {
 
 // Share the watch design
 async function shareDesign() {
-  const element = document.getElementById("watchDisplay");
-
+  const shareCard = document.createElement("div");
+        shareCard.style.cssText = `
+        width:800px;
+        padding:60px;
+        background:linear-gradient(135deg,#0f172a,#1e293b,#000);
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        font-family:Arial,sans-serif;
+        color:white;
+        border-radius:30px;
+        `;
+        shareCard.innerHTML = `
+        <h1 style="color:#fbbf24;font-size:48px;font-weight:bold;margin-bottom:30px;">
+        CHRONOS ATELIER
+        </h1>
+        ${document.getElementById("watchImage").outerHTML}
+        <h2 style="margin-top:35px;font-size:34px;">
+        Bespoke Timepiece
+        </h2>
+        <p style="font-size:30px;color:#fbbf24;margin:15px 0;">
+        ₹${calculatePrice()}
+        </p>
+        <p style="color:#cbd5e1;font-size:18px;">
+        Crafted with Swiss Precision
+        </p>
+        `;
+        document.body.appendChild(shareCard);
   try {
-    const canvas = await html2canvas(element);
+    const canvas = await html2canvas(shareCard,{
+        backgroundColor:null,
+        scale:3
+    });
 
     canvas.toBlob(async (blob) => {
       const file = new File([blob], "watch.png", { type: "image/png" });
@@ -619,6 +649,7 @@ async function shareDesign() {
     console.error(err);
     alert("Sharing failed");
   }
+  shareCard.remove();
 }
 
 // Download the watch as an image
