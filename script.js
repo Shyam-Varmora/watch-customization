@@ -613,8 +613,31 @@ async function shareDesign() {
         <p style="font-size:30px;color:#fbbf24;margin:15px 0;">
         ₹${calculatePrice()}
         </p>
-        <p style="color:#cbd5e1;font-size:18px;">
-        Crafted with Swiss Precision
+        <p style="color:#cbd5e1;font-size:18px;margin-top:10px;">
+            Crafted with Swiss Precision
+            </p>
+
+            <div style="
+            margin-top:30px;
+            width:100%;
+            height:1px;
+            background:rgba(251,191,36,.35);
+            "></div>
+
+            <p style="
+            margin-top:20px;
+            font-size:18px;
+            color:#fbbf24;
+            font-weight:600;
+            ">
+            Make Your Custom Watch
+            </p>
+
+            <p style="
+            font-size:16px;
+            color:#ffffff;
+            ">
+            https://watch-customization.netlify.app/
         </p>
         `;
         document.body.appendChild(shareCard);
@@ -631,7 +654,7 @@ async function shareDesign() {
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: "My Custom Watch",
-          text: "Check out my custom watch design!",
+          text: "Make Your Custom Watch:\nhttps://watch-customization.netlify.app/" ,
           files: [file]
         });
       } else {
