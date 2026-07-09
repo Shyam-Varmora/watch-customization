@@ -584,7 +584,7 @@ async function saveDesign() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    alert("Your watch is saved successfully into the cart!");
+    alert("✓ Watch saved successfully");
 }
 
 // Share the watch design
@@ -743,5 +743,5 @@ async function addToCart() {
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    alert("Your watch is saved successfully into the cart!");
+    alert("✓ Watch saved successfully");
 }
