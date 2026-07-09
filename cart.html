@@ -8,99 +8,58 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="cart.png">
 </head>
-
 <body>
-
-<div class="min-h-screen bg-gradient">
-
-<header class="header">
-    <div class="container">
-       <div class="header-content">
-
-    <div class="brand">
-
-        <div class="brand-icon">
-            <svg class="crown-icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="20" r="1.5"></circle>
-                <circle cx="18" cy="20" r="1.5"></circle>
-                <path d="M2 3h3l2.2 10.5a2 2 0 0 0 2 1.5h7.8a2 2 0 0 0 2-1.6L21 7H7"></path>
-            </svg>
-        </div>
-
-        <div class="brand-text">
-            <h1 class="brand-title">MY CART</h1>
-            <p class="brand-subtitle">Saved Watches</p>
-        </div>
-
+    <div class="min-h-screen bg-gradient">
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="brand">
+                        <div class="brand-icon">
+                            <svg class="crown-icon" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="9" cy="20" r="1.5"></circle>
+                                <circle cx="18" cy="20" r="1.5"></circle>
+                                <path d="M2 3h3l2.2 10.5a2 2 0 0 0 2 1.5h7.8a2 2 0 0 0 2-1.6L21 7H7"></path>
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <h1 class="brand-title">MY CART</h1>
+                            <p class="brand-subtitle">Saved Watches</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main style="padding:20px 0;">
+            <div class="container">
+                <div id="container"></div>
+            </div>
+        </main>
     </div>
-
-</div>
-    </div>
-</header>
-
-<main style="padding:20px 0;">
-
-<div class="container">
-
-<div id="container"></div>
-
-</div>
-
-</main>
-
-</div>
-
-<script>
-
-const container=document.getElementById("container");
-
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
-
-if(cart.length===0){
-
-container.innerHTML="<h2 style='color:white;text-align:center;'>Your cart is empty</h2>";
-
-}
-
-cart.forEach((item,index)=>{
-
-const card=document.createElement("div");
-
-card.className="cart-card";
-
-card.innerHTML=`
-
-<img src="${item.image}" class="cart-image">
-
-<h2 class="card-title">Custom Watch ${index+1}</h2>
-
-<p class="price-total-value">₹${item.price}</p>
-
-<button class="btn-secondary" onclick="deleteItem(${index})">
-
-Delete
-
-</button>
-
-`;
-
-container.appendChild(card);
-
-});
-
-function deleteItem(index){
-
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
-
-cart.splice(index,1);
-
-localStorage.setItem("cart",JSON.stringify(cart));
-
-location.reload();
-
-}
-
-</script>
-
+    <script>
+        const container=document.getElementById("container");
+        let cart=JSON.parse(localStorage.getItem("cart"))||[];
+        if(cart.length===0){
+            container.innerHTML="<h2 style='color:white;text-align:center;'>Your cart is empty</h2>";
+        }
+        cart.forEach((item,index)=>{
+            const card=document.createElement("div");
+                card.className="cart-card";
+                card.innerHTML=`
+                    <img src="${item.image}" class="cart-image">
+                <h2 class="card-title">Custom Watch ${index+1}</h2>
+                <p class="price-total-value">₹${item.price}</p>
+                <button class="btn-secondary" onclick="deleteItem(${index})">
+                    Delete
+                </button>
+        `;
+        container.appendChild(card);
+        });
+        function deleteItem(index){
+            let cart=JSON.parse(localStorage.getItem("cart"))||[];
+            cart.splice(index,1);
+            localStorage.setItem("cart",JSON.stringify(cart));
+            location.reload();
+        }
+    </script>
 </body>
 </html>
